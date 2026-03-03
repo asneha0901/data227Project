@@ -1,20 +1,40 @@
 import streamlit as st
 import altair as alt
 from utils.io import chicago_wards_df, cats_sorted, costs_wide
-import geopandas as gpd
 
 st.set_page_config(page_title="Story", layout="wide")
 
 cat_radio = alt.binding_radio(options=cats_sorted, name="Category: ")
 cat_sel = alt.param(name="cat_sel", value=cats_sorted[0], bind=cat_radio)
 
+
+
+chicago_wards = alt.topo_feature(
+"https://raw.githubusercontent.com/asneha0901/data227_content/refs/heads/main/chicago-ward-boundaries.topojson",
+feature="data"
+)
+
+chicago_projection = alt.Chart(
+    chicago_wards, 
+    title="Albers Projection (map looks ok)"
+).mark_geoshape(
+    fill='#d3d3d3', # '#2a1d0c', 
+    stroke='#706545',  # Optional: Outline color
+    strokeWidth=0.75    # Optional: Outline width
+).project(
+    type='mercator'
+).encode(tooltip=[
+            alt.Tooltip("properties.ward:O", title="Ward")
+        ]
+) 
+
 joint_chart = (
-    alt.Chart(chicago_wards_df, title="Expenditure by Ward (select category)")
+    alt.Chart(chicago_wards, title="Expenditure by Ward (select category)")
     .mark_geoshape(stroke="#706545")
     .project(type="mercator")
     .add_params(cat_sel)
     .transform_lookup(
-        lookup="ward",
+        lookup="properties.ward",
         from_=alt.LookupData(
             costs_wide,
             key="ward",
@@ -30,17 +50,6 @@ joint_chart = (
         ],
     )
 )
-chicago_projection = alt.Chart(
-    chicago_wards_df, 
-    title="Albers Projection (map looks ok)"
-).mark_geoshape(
-    fill='#d3d3d3', # '#2a1d0c', 
-    stroke='#706545',  # Optional: Outline color
-    strokeWidth=0.75    # Optional: Outline width
-).project(
-    type='mercator'
-) 
-
 
 
 st.title("Overview of Chicago Menu-Money Spending Patterns")
@@ -48,7 +57,7 @@ st.markdown("**Central question:** *How do different wards allocate their Chicag
 
 st.header("Chicago Menu-Money Spending by Category")
 st.write("To begin with let us see which each type of category is prioritized in different wards.")
-st.altair_chart(chicago_projection)
+st.altair_chart(joint_chart)
 st.caption("Takeaway:")
 
 st.write("Geo ward dtype:", chicago_wards_df["ward"].dtype)
