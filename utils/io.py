@@ -2,15 +2,18 @@ import streamlit as st
 import pandas as pd
 from vega_datasets import data
 import numpy as np
-
-chicago_wards_df = pd.read_json('data/chicago-ward-boundaries.geojson')
+import geojson
+import json # just for viewing purposes
+from pathlib import Path
+import altair as alt
+menu=pd.read_csv("/Users/snehaagarwal/data227Project/data/menu.csv")
+chicago_wards_df = pd.read_json('/Users/snehaagarwal/Downloads/data/chicago-ward-boundaries.geojson')
 chicago_wards_df['type'] = chicago_wards_df.features.apply(lambda x: x['type']) # Required! 
 chicago_wards_df['geometry'] = chicago_wards_df.features.apply(lambda x: x['geometry'])
 chicago_wards_df['ward'] = chicago_wards_df.features.apply(lambda x: x['properties']['ward'])
-menu=pd.read_csv("data/Chicago Menu Money Expenditures, 2012-2023 - AllMenu2012-2023.csv")
 menu['cost'] = (
     menu['cost']
-    .replace('[\$,]', '', regex=True)
+    .replace(r'[$,]', '', regex=True)
     .astype(float)
     .astype(int)
 )
@@ -51,4 +54,8 @@ costs_wide = (
 cats_sorted = sorted([c for c in costs_wide.columns if c != "ward"])
 
 
+chicago_wards_df["ward"] = chicago_wards_df["ward"].astype(int)
+menu["ward"] = pd.to_numeric(menu["ward"], errors="coerce").astype("Int64")
 
+# after costs_wide is created
+costs_wide["ward"] = costs_wide["ward"].astype(int)
