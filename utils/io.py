@@ -4,7 +4,6 @@ from vega_datasets import data
 import numpy as np
 import geojson
 import json # just for viewing purposes
-from pathlib import Path
 import altair as alt
 menu=pd.read_csv("/Users/snehaagarwal/data227Project/data/menu.csv")
 chicago_wards_df = pd.read_json('/Users/snehaagarwal/Downloads/data/chicago-ward-boundaries.geojson')
