@@ -4,8 +4,8 @@ from vega_datasets import data
 import numpy as np
 import geojson
 import altair as alt
-menu=pd.read_csv("/Users/snehaagarwal/data227Project/data/menu.csv")
-chicago_wards_df = pd.read_json('/Users/snehaagarwal/Downloads/data/chicago-ward-boundaries.geojson')
+menu=pd.read_csv("data/menu.csv")
+chicago_wards_df = pd.read_json('data/chicago-ward-boundaries.geojson')
 chicago_wards_df['type'] = chicago_wards_df.features.apply(lambda x: x['type']) # Required! 
 chicago_wards_df['geometry'] = chicago_wards_df.features.apply(lambda x: x['geometry'])
 chicago_wards_df['ward'] = chicago_wards_df.features.apply(lambda x: x['properties']['ward'])
