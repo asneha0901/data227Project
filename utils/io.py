@@ -57,3 +57,23 @@ menu["ward"] = pd.to_numeric(menu["ward"], errors="coerce").astype("Int64")
 
 # after costs_wide is created
 costs_wide["ward"] = costs_wide["ward"].astype(int)
+costs_lon_nostreets = costs_long[costs_long['category']!='Streets & Transportation']
+costs_lon_nostreets = costs_lon_nostreets[costs_lon_nostreets['category']!='Lighting']
+def mid_ward(row): 
+    '''Get a geometry column and return the middle of the geo area'''
+    return np.array(row['coordinates'][0][0]).mean(axis=0)
+
+
+
+chicago_wards_df['middle'] = chicago_wards_df['geometry'].apply(lambda x: mid_ward(x))
+chicago_wards_df['middle'].head()
+
+chicago_wards_df['ward']=chicago_wards_df['ward'].astype(int)
+merged_data2 = chicago_wards_df.merge(
+    costs_lon_nostreets[['ward', 'category', 'cost']], 
+    on='ward', 
+    how='left'
+)
+merged_data2['long'] = merged_data2['middle'].apply(lambda x: x[0])
+merged_data2['latt'] = merged_data2['middle'].apply(lambda x: x[1])
+points_df2 = merged_data2[["long", "latt", "ward", "cost", "category"]].copy()
