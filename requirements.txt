@@ -3,5 +3,4 @@ altair
 pandas
 vega_datasets
 geojson
-json
-geopandas
+numpy
