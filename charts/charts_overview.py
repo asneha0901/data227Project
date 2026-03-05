@@ -56,7 +56,7 @@ points = alt.Chart(points_df2).mark_circle().encode(
 )
 bar_chart1 = alt.Chart(points_df2).mark_bar().encode(
     x=alt.X('category:N', title='Property Type'),
-    y=alt.Y('mean(cost):Q', title='Total Spent', scale=alt.Scale(domain=[0,1000000])),
+    y=alt.Y('mean(cost):Q', title='Average Spent', scale=alt.Scale(domain=[0,1000000])),
     color=alt.Color('category:N', legend=None),
     tooltip=['category:N', 'mean(cost):Q']
 ).transform_filter(
@@ -68,7 +68,7 @@ bar_chart1 = alt.Chart(points_df2).mark_bar().encode(
 )
 bar_chart2 = alt.Chart(points_df2).mark_bar().encode(
     x=alt.X('category:N', title='Property Type'),
-    y=alt.Y('mean(cost):Q', title='Total Spent'),
+    y=alt.Y('mean(cost):Q', title='Average Spent'),
     color=alt.Color('category:N', legend=None),
     tooltip=['category:N', 'mean(cost):Q']
 ).transform_filter(
