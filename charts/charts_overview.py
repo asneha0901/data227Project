@@ -25,16 +25,16 @@ spend_by_type = (
     )
     .transform_calculate(selected_cost="datum[cat_sel] || 0")
     .encode(
-        color=alt.Color("selected_cost:Q", scale=alt.Scale(scheme="greens"), title="Total cost").legend(
-            orient="left", title=' ', padding=50),
+        color=alt.Color("selected_cost:Q", scale=alt.Scale(scheme="warmgreys"), title="Total cost").legend(
+            orient="left", title='TOTAL COST', padding=50),
         tooltip=[
             alt.Tooltip("ward:O", title="Ward"),
             alt.Tooltip("selected_cost:Q", title="Total cost", format=",")
         ],
-    )
+    ).properties(width=300)
 )
 
-brush = alt.selection_interval(encodings=["longitude", "latitude"])
+brush = alt.selection_point(fields=['neighborhoods'], bind='legend')
 basemap=alt.Chart(
     chicago_wards, title='Most Popular Property Type by Ward'
 ).mark_geoshape(  
@@ -44,20 +44,21 @@ basemap=alt.Chart(
 ).project(
     type='mercator'
 )
-points = alt.Chart(points_df2).mark_circle(opacity=0.35, color="black").encode(
+points = alt.Chart(points_df2).mark_circle().encode(
     longitude="long:Q",
     latitude="latt:Q",
-    color=alt.condition(brush, alt.value("red"), alt.value("black")),
-    opacity=alt.condition(brush, alt.value(0.9), alt.value(0.15)),
+    color=alt.Color('neighborhoods:N',scale=alt.Scale(scheme="dark2")).legend(
+            orient="left", title='neighborhoods ', padding=40),
+    opacity=alt.condition(brush, alt.value(1), alt.value(0.05)),
     tooltip=["ward:N"]
 ).add_params(
     brush
 )
 bar_chart1 = alt.Chart(points_df2).mark_bar().encode(
     x=alt.X('category:N', title='Property Type'),
-    y=alt.Y('sum(cost):Q', title='Total Spent', scale=alt.Scale(domain=[0,22000000])),
+    y=alt.Y('mean(cost):Q', title='Total Spent', scale=alt.Scale(domain=[0,1000000])),
     color=alt.Color('category:N', legend=None),
-    tooltip=['category:N', 'sum(cost):Q']
+    tooltip=['category:N', 'mean(cost):Q']
 ).transform_filter(
     brush 
 ).properties(
@@ -67,9 +68,9 @@ bar_chart1 = alt.Chart(points_df2).mark_bar().encode(
 )
 bar_chart2 = alt.Chart(points_df2).mark_bar().encode(
     x=alt.X('category:N', title='Property Type'),
-    y=alt.Y('sum(cost):Q', title='Total Spent'),
+    y=alt.Y('mean(cost):Q', title='Total Spent'),
     color=alt.Color('category:N', legend=None),
-    tooltip=['category:N', 'sum(cost):Q']
+    tooltip=['category:N', 'mean(cost):Q']
 ).transform_filter(
     brush 
 ).properties(
