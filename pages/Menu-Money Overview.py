@@ -1,6 +1,7 @@
 import streamlit as st
 import altair as alt
 from utils.io import chicago_wards_df, cats_sorted, costs_wide
+from charts.charts_overview import barchartcost
 
 st.set_page_config(page_title="Story", layout="wide")
 
@@ -57,10 +58,5 @@ st.markdown("**Central question:** *How do different wards allocate their Chicag
 
 st.header("Chicago Menu-Money Spending by Category")
 st.write("To begin with let us see which each type of category is prioritized in different wards.")
-st.altair_chart(joint_chart)
+st.altair_chart(barchartcost)
 st.caption("Takeaway:")
-
-st.write("Geo ward dtype:", chicago_wards_df["ward"].dtype)
-st.write("Costs ward dtype:", costs_wide["ward"].dtype)
-st.write("Example categories:", cats_sorted[:5])
-st.write("Costs_wide columns include first category?", cats_sorted[0] in costs_wide.columns)
