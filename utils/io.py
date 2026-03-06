@@ -134,7 +134,7 @@ crime21=crime21[crime21['Primary Type'].apply(lambda x: x in public)]
 crime21=crime21.groupby("Ward", as_index=True)["Year"].count().reindex(all_wards, fill_value=0).reset_index()
 
 #database for crime time
-crimetime=pd.read_csv("/Users/snehaagarwal/Downloads/Crimetime.csv")
+crimetime=pd.read_csv("data/Crimetime.csv")
 crimetime['count'] = (
     crimetime['count']
     .replace(r'[$,]', '', regex=True)
