@@ -26,12 +26,12 @@ spend_by_type = (
     .transform_calculate(selected_cost="datum[cat_sel] || 0")
     .encode(
         color=alt.Color("selected_cost:Q", scale=alt.Scale(scheme="warmgreys"), title="Total cost").legend(
-            orient="left", title='TOTAL COST', padding=50),
+            orient="bottom", title='TOTAL COST', padding=50),
         tooltip=[
             alt.Tooltip("ward:O", title="Ward"),
             alt.Tooltip("selected_cost:Q", title="Total cost", format=",")
         ],
-    ).properties(width=300)
+    ).properties(height=700)
 )
 
 brush = alt.selection_point(fields=['neighborhoods'], bind='legend')
@@ -62,7 +62,7 @@ bar_chart1 = alt.Chart(points_df2).mark_bar().encode(
 ).transform_filter(
     brush 
 ).properties(
-    width=360,
+    width=300,
     height=300,
     title='Sales by Property Type in Selected Wards (static scale)'
 )
@@ -74,10 +74,10 @@ bar_chart2 = alt.Chart(points_df2).mark_bar().encode(
 ).transform_filter(
     brush 
 ).properties(
-    width=360,
+    width=300,
     height=300,
     title='Sales by Property Type in Selected Wards (refactored scale)'
 )
 map_view = (spend_by_type + points).project(type="mercator")
 
-barchartcost=(map_view | bar_chart1 | bar_chart2)
+barchartcost=(map_view | (bar_chart1 & bar_chart2))
