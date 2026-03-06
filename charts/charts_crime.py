@@ -36,7 +36,25 @@ timeline=alt.layer(line1, line2).resolve_scale(
 ).properties(width=750)
 
 crimeperk = (
-    alt.Chart(chicago_wards, title="Public Crimes by Ward in 2021")
+    alt.Chart(chicago_wards, title="Money Spent on Cameras / Crime / Person")
+    .mark_geoshape(stroke="#706545")
+    .project(type="mercator")
+    .transform_lookup(
+        lookup="properties.ward",
+        from_=alt.LookupData(
+            yr2021sec,
+            key="ward",
+            fields=['spent per crime per person'] 
+        )).encode(
+        color=alt.Color("spent per crime per person:Q", scale=alt.Scale(scheme="greens"), title="Money on Cameras Per Crime Per Person", legend=alt.Legend(orient='bottom')),
+        tooltip=[
+            alt.Tooltip("ward:O", title="Ward"),
+            alt.Tooltip("spent per crime per person:Q", title="Money on cameras per crime per person", format=",")
+        ],
+    ).properties(width=270)
+)
+crimetot = (
+    alt.Chart(chicago_wards, title="Total Public Crimes by Ward in 2021")
     .mark_geoshape(stroke="#706545")
     .project(type="mercator")
     .transform_lookup(
@@ -44,16 +62,15 @@ crimeperk = (
         from_=alt.LookupData(
             crime21,
             key="ward",
-            fields=['Crime per 1k'] 
+            fields=['Year'] 
         )).encode(
-        color=alt.Color("Crime per 1k:Q", scale=alt.Scale(scheme="blues"), title="Rate of crimes per 1k residents", legend=alt.Legend(orient='bottom')),
+        color=alt.Color("Year:Q", scale=alt.Scale(scheme="blues"), title="Total Public Crimes in 2021", legend=alt.Legend(orient="bottom")),
         tooltip=[
             alt.Tooltip("ward:O", title="Ward"),
-            alt.Tooltip("Crime per 1k:Q", title="Rate of crimes per 1k residents", format=",")
+            alt.Tooltip("Year:Q", title="Rate of crimes", format=",")
         ],
-    ).properties(width=270)
+    )
 )
-
 cat_radio = alt.binding_radio(options=races3, name="Race: ")
 cat_sel = alt.param(name="cat_sel", value=races3[0], bind=cat_radio)
 race_dist = (
@@ -78,6 +95,6 @@ race_dist = (
         ],
     ).properties(width=270)
 )
-spatial=(seccamchart | crimeperk | race_dist).resolve_scale(color="independent")
+spatial=(race_dist | crimeperk | crimetot).resolve_scale(color="independent")
 
 crimefullchart=(timeline & spatial)

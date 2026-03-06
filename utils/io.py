@@ -167,3 +167,8 @@ acs['All Other Ratio']= 1 - (acs['Black/AA Ratio']+acs['White Not Hispanic or La
 races=['White Ratio', 'American Indian Ratio', 'Black/AA Ratio', 'Asian Ratio', 'Native Hawaiian or Pacific Islander Ratio', 'Other Race Ratio', 'Multiracial Ratio', 'White Not Hispanic or Latino Ratio', 'Hispanic or Latino Ratio' ]
 races3=['Black/AA Ratio','All Other Ratio', 'White Not Hispanic or Latino Ratio', 'Hispanic or Latino Ratio' ]
 
+
+yr2021sec['crime per 1k']=crime21['Crime per 1k']
+yr2021sec['cost']=yr2021sec['cost'].replace(0,1)
+yr2021sec['spent per crime per 1k']=yr2021sec['cost']/yr2021sec['crime per 1k']
+yr2021sec['spent per crime per person']=yr2021sec['spent per crime per 1k']/1000
