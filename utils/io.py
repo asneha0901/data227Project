@@ -125,6 +125,7 @@ yr2021sec=yr2021sec.rename(columns={"ward":"WARDS"})
 yr2021sec=yr2021sec.groupby("WARDS", as_index=True)["cost"].sum().reindex(all_wards, fill_value=0).reset_index()
 yr2021sec['cost']=yr2021sec['cost'].astype(int)
 
+
 #ADDING THE NECESSARY DATABASES FOR THE CRIME VISUALIZATION
 crime21=pd.read_csv("data/Crimes2021.csv")
 crime21=crime21[crime21['Domestic']==False]
@@ -166,13 +167,19 @@ acs['Hispanic or Latino Ratio']=acs['Hispanic or Latino']/acs['Total Population'
 acs['All Other Ratio']= 1 - (acs['Black/AA Ratio']+acs['White Not Hispanic or Latino Ratio']+acs['Hispanic or Latino Ratio'])
 races=['White Ratio', 'American Indian Ratio', 'Black/AA Ratio', 'Asian Ratio', 'Native Hawaiian or Pacific Islander Ratio', 'Other Race Ratio', 'Multiracial Ratio', 'White Not Hispanic or Latino Ratio', 'Hispanic or Latino Ratio' ]
 races3=['Black/AA Ratio','All Other Ratio', 'White Not Hispanic or Latino Ratio', 'Hispanic or Latino Ratio' ]
+acssub=acs[['Ward','Black/AA Ratio','All Other Ratio', 'White Not Hispanic or Latino Ratio', 'Hispanic or Latino Ratio']]
 
+acssub['Most Common Race']=acssub[['Black/AA Ratio','All Other Ratio', 'White Not Hispanic or Latino Ratio', 'Hispanic or Latino Ratio']].idxmax(axis=1)
+acssub['Ward']=acssub['Ward'].astype(int)
+acssub=acssub.sort_values(by='Ward', ascending=True).reset_index()
 
 yr2021sec['crime per 1k']=crime21['Crime per 1k']
 yr2021sec['cost']=yr2021sec['cost'].replace(0,1)
 yr2021sec['spent per crime per 1k']=yr2021sec['cost']/yr2021sec['crime per 1k']
 yr2021sec['spent per crime per person']=yr2021sec['spent per crime per 1k']/1000
-
+yr2021sec['Most Common Race']=acssub['Most Common Race']
+yr2021sec['Most Common Race']=yr2021sec['Most Common Race'].str.replace(' Ratio', '', regex=False)
+crime21['Most Common Race']=yr2021sec['Most Common Race']
 
 #database for streets
 sumspent=np.array(costs_long.groupby('ward').sum()['cost'])

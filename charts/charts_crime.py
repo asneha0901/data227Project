@@ -35,42 +35,51 @@ timeline=alt.layer(line1, line2).resolve_scale(
     y='independent'
 ).properties(width=750)
 
+brush2 = alt.selection_point(fields=['Most Common Race'], bind='legend')
+
 crimeperk = (
     alt.Chart(chicago_wards, title="Money Spent on Cameras / Crime / Person")
-    .mark_geoshape(stroke="#706545")
+    .mark_geoshape(strokeWidth=2.3)
     .project(type="mercator")
-    .transform_lookup(
+    .add_params(brush2).transform_lookup(
         lookup="properties.ward",
         from_=alt.LookupData(
             yr2021sec,
             key="ward",
-            fields=['spent per crime per person'] 
+            fields=['spent per crime per person', 'Most Common Race'] 
         )).encode(
         color=alt.Color("spent per crime per person:Q", scale=alt.Scale(scheme="greens"), title="Money on Cameras Per Crime Per Person", legend=alt.Legend(orient='bottom')),
         tooltip=[
-            alt.Tooltip("ward:O", title="Ward"),
+            alt.Tooltip("properties.ward:O", title="Ward"),
             alt.Tooltip("spent per crime per person:Q", title="Money on cameras per crime per person", format=",")
         ],
-    ).properties(width=270)
-)
+        stroke=alt.Stroke('Most Common Race:N', scale=alt.Scale(scheme='tableau10')).legend(
+            orient="right", title='Most Common Race'),
+        strokeOpacity=alt.condition(brush2, alt.value(1), alt.value(0.1))
+    ).properties(width=270))
+
+
 crimetot = (
     alt.Chart(chicago_wards, title="Total Public Crimes by Ward in 2021")
-    .mark_geoshape(stroke="#706545")
+    .mark_geoshape(strokeWidth=2.3)
     .project(type="mercator")
-    .transform_lookup(
+    .add_params(brush2).transform_lookup(
         lookup="properties.ward",
         from_=alt.LookupData(
             crime21,
             key="ward",
-            fields=['Year'] 
+            fields=['Year', 'Most Common Race'] 
         )).encode(
-        color=alt.Color("Year:Q", scale=alt.Scale(scheme="blues"), title="Total Public Crimes in 2021", legend=alt.Legend(orient="bottom")),
+        color=alt.Color("Year:Q", scale=alt.Scale(scheme="greens"), title="Total number of crimes", legend=alt.Legend(orient='bottom')),
         tooltip=[
-            alt.Tooltip("ward:O", title="Ward"),
-            alt.Tooltip("Year:Q", title="Rate of crimes", format=",")
+            alt.Tooltip("properties.ward:O", title="Ward"),
+            alt.Tooltip("Year:Q", title="Total Number of Crimes", format=",")
         ],
-    )
-)
+        stroke=alt.Stroke('Most Common Race:N', scale=alt.Scale(scheme='tableau10')).legend(
+            orient="right", title='Most Common Race'),
+        strokeOpacity=alt.condition(brush2, alt.value(1), alt.value(0.1))
+    ).properties(width=270))
+
 cat_radio = alt.binding_radio(options=races3, name="Race: ")
 cat_sel = alt.param(name="cat_sel", value=races3[0], bind=cat_radio)
 race_dist = (
@@ -90,7 +99,7 @@ race_dist = (
     .encode(
         color=alt.Color("selected_race:Q", scale=alt.Scale(scheme="purples"), title="Proportion of Race", legend=alt.Legend(orient='bottom')),
         tooltip=[
-            alt.Tooltip("Ward:O", title="Ward"),
+            alt.Tooltip("properties.ward:O", title="Ward"),
             alt.Tooltip("selected_race:Q", title="Proportion", format=",")
         ],
     ).properties(width=270)
