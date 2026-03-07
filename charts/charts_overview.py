@@ -1,5 +1,6 @@
 import altair as alt
 import pandas as pd
+import geopandas as gpd
 from utils.io import chicago_wards_df, cats_sorted, costs_wide, costs_lon_nostreets, points_df2
 
 
@@ -12,11 +13,11 @@ feature="data"
 )
 spend_by_type = (
     alt.Chart(chicago_wards)
-    .mark_geoshape(stroke="#706545")
+    .mark_geoshape(stroke="#D9D6CD")
     .project(type="mercator")
     .add_params(cat_sel)
     .transform_lookup(
-        lookup="properties.ward",
+        lookup="ward",
         from_=alt.LookupData(
             costs_wide,
             key="ward",
@@ -31,7 +32,7 @@ spend_by_type = (
             alt.Tooltip("ward:O", title="Ward"),
             alt.Tooltip("selected_cost:Q", title="Total cost", format=",")
         ],
-    ).properties(height=700)
+    ).properties(height=500, width=450)
 )
 
 brush = alt.selection_point(fields=['neighborhoods'], bind='legend')
@@ -62,9 +63,9 @@ bar_chart1 = alt.Chart(points_df2).mark_bar().encode(
 ).transform_filter(
     brush 
 ).properties(
-    width=300,
-    height=300,
-    title='Sales by Property Type in Selected Wards (static scale)'
+    width=400,
+    height=400,
+    title='Menu-Money Spent By Category (per Side) (static scale)'
 )
 bar_chart2 = alt.Chart(points_df2).mark_bar().encode(
     x=alt.X('category:N', title='Property Type'),
@@ -76,8 +77,8 @@ bar_chart2 = alt.Chart(points_df2).mark_bar().encode(
 ).properties(
     width=300,
     height=300,
-    title='Sales by Property Type in Selected Wards (refactored scale)'
+    title='Menu-Money Spent By Category (per Side) (refactored scale)'
 )
 map_view = (spend_by_type + points).project(type="mercator")
 
-barchartcost=(map_view | (bar_chart1 & bar_chart2))
+barchartcost=(map_view | (bar_chart1))

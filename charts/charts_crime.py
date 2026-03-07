@@ -1,6 +1,6 @@
 import altair as alt
 import pandas as pd
-from utils.io import chicago_wards_df, yr2021sec, secdf, crime21, races3, acs
+from utils.io import chicago_wards_df, yr2021sec, secdf, crime21, races3, acs, costs_long_top2, wardlitcrashcount, wardcrashcount
 
 chicago_wards = alt.topo_feature(
 "https://raw.githubusercontent.com/asneha0901/data227_content/refs/heads/main/chicago-ward-boundaries.topojson",
@@ -98,3 +98,57 @@ race_dist = (
 spatial=(race_dist | crimeperk | crimetot).resolve_scale(color="independent")
 
 crimefullchart=(timeline & spatial)
+
+
+percentage1=alt.Chart(costs_long_top2, title='Proportion of Menu-Money Spent').mark_bar().encode(
+    x=alt.X('average(Percentage spent on Category):Q', scale=alt.Scale(domain=[0,1], clamp=True), title='Proportion of Menu-Money Spent'),
+    yOffset="category:N",
+    y=alt.Y('neighborhoods:N'),
+    color=alt.Color('average(area):Q', scale=alt.Scale(scheme='blues'), legend=alt.Legend(orient='bottom')),
+    stroke=alt.Stroke('category', scale=alt.Scale(scheme='accent'), legend=None))
+text = percentage1.mark_text(
+    align="left",
+    baseline="middle",
+    dx=2,
+).encode(text="category", color=alt.Color('category', scale=alt.Scale(scheme='accent'), legend=None))
+
+percentage=(percentage1 + text).properties(width=550)
+
+areanorm=alt.Chart(costs_long_top2, title='Amount of Money Spent Relative to Ward Area').mark_bar(height=30).encode(
+    x=alt.X('average(cost on category by area):Q', title='Average of cost per area of ward'),
+    y=alt.Y('neighborhoods:N', title=''),
+    color=alt.Color('category:N', scale=alt.Scale(scheme='accent'), title='Category',legend=alt.Legend(orient='bottom'))
+).properties(height=300)
+
+crash_chart = (
+    alt.Chart(chicago_wards, title="Number of Crashes Due to Road Defects")
+    .mark_geoshape(stroke="#706545")
+    .project(type="mercator")
+    .transform_lookup(
+        lookup="properties.ward",
+        from_=alt.LookupData(
+            wardcrashcount,
+            key="ward",
+            fields=['crash per 1k res'] 
+        )).encode(
+        color=alt.Color("crash per 1k res:Q", scale=alt.Scale(scheme="purples"), title="Number of Crashes / 1k residents", legend=alt.Legend(orient='right', padding=50))
+    )
+).properties(height=400)
+
+ratiolight_chart = (
+    alt.Chart(chicago_wards, title="Number of Crashes Due to Unlit Roads")
+    .mark_geoshape(stroke="#706545")
+    .project(type="mercator")
+    .transform_lookup(
+        lookup="properties.ward",
+        from_=alt.LookupData(
+            wardlitcrashcount,
+            key="ward",
+            fields=['unlit_to_lit_ratio'] 
+        )).encode(
+        color=alt.Color("unlit_to_lit_ratio:Q", scale=alt.Scale(scheme="greens"), title="Crash Ratio Relative to Lit Roads", legend=alt.Legend(orient='right', padding=50))
+    )
+).properties(height=400)
+
+transporttot=(percentage | areanorm).resolve_scale(color='independent') & (crash_chart | ratiolight_chart).resolve_scale(color='independent')
+transporttot

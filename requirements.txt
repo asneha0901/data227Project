@@ -4,3 +4,4 @@ pandas
 vega_datasets
 geojson
 numpy
+geopandas

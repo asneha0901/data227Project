@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from vega_datasets import data
 import numpy as np
-import geojson
+import geopandas as gpd
 import altair as alt
 menu=pd.read_csv("data/menu.csv")
 chicago_wards_df = pd.read_json('data/chicago-ward-boundaries.geojson')
@@ -54,15 +54,15 @@ costs_wide["ward"] = costs_wide["ward"].astype(int)
 costs_long['ward']=costs_long['ward'].astype(int)
 # dictionary from earlier
 ward_to_side = {
-    1: "North Side", 2: "Central", 3: "South Side", 4: "Central", 5: "South Side",
-    6: "South Side", 7: "South Side", 8: "South Side", 9: "South Side", 10: "South Side",
-    11: "West Side", 12: "West Side", 13: "Southwest Side", 14: "Southwest Side",
-    15: "Southwest Side", 16: "Southwest Side", 17: "Southwest Side", 18: "Southwest Side",
-    19: "Southwest Side", 20: "South Side", 21: "Southwest Side", 22: "West Side",
-    23: "Southwest Side", 24: "West Side", 25: "West Side", 26: "Northwest Side", 27: "Central",
+    1: "North Side", 2: "Central", 3: "South Side", 4: "South Side", 5: "South Side",
+    6: "South Side", 7: "South Side", 8: "South Side", 9: "South Side", 10: "Far South Side",
+    11: "South Side", 12: "Southwest Side", 13: "Southwest Side", 14: "Southwest Side",
+    15: "Southwest Side", 16: "South Side", 17: "Southwest Side", 18: "Southwest Side",
+    19: "Far South Side", 20: "South Side", 21: "Far South Side", 22: "Southwest Side",
+    23: "Southwest Side", 24: "West Side", 25: "Central", 26: "West Side", 27: "Central",
     28: "West Side", 29: "West Side", 30: "Northwest Side", 31: "Northwest Side",
     32: "North Side", 33: "North Side", 34: "South Side", 35: "Northwest Side",
-    36: "Northwest Side", 37: "Northwest Side", 38: "Northwest Side", 39: "Far North Side",
+    36: "Northwest Side", 37: "West Side", 38: "Northwest Side", 39: "Northwest Side",
     40: "Far North Side", 41: "Far North Side", 42: "Central", 43: "North Side",
     44: "North Side", 45: "Northwest Side", 46: "North Side", 47: "North Side",
     48: "Far North Side", 49: "Far North Side", 50: "Far North Side"
@@ -172,3 +172,30 @@ yr2021sec['crime per 1k']=crime21['Crime per 1k']
 yr2021sec['cost']=yr2021sec['cost'].replace(0,1)
 yr2021sec['spent per crime per 1k']=yr2021sec['cost']/yr2021sec['crime per 1k']
 yr2021sec['spent per crime per person']=yr2021sec['spent per crime per 1k']/1000
+
+
+#database for streets
+sumspent=np.array(costs_long.groupby('ward').sum()['cost'])
+sumspent2=np.append(sumspent, sumspent)
+costs_long_st=costs_long[costs_long['category']=="Streets & Transportation"]
+costs_long_lighting=costs_long[costs_long['category']=="Lighting"]
+costs_long_top2=pd.concat([costs_long_st, costs_long_lighting], axis=0)
+costs_long_top2['Total Spent by Ward']=sumspent2
+costs_long_top2['Percentage spent on Category']=costs_long_top2['cost']/costs_long_top2['Total Spent by Ward']
+chicago_wards_df['area'] = chicago_wards_df.features.apply(lambda x: x['properties']['shape_area'])
+chicago_wards_df['ward']=chicago_wards_df['ward'].astype(int)
+area=chicago_wards_df.sort_values(by='ward', ascending=True)['area']
+area2=np.append(area, area)
+costs_long_top2['area']=area2.astype(float)
+costs_long_top2['neighborhoods']=costs_long_top2['ward'].map(ward_to_side)
+costs_long_top2['cost on category by area']=costs_long_top2['cost']/costs_long_top2['area']
+
+#database for crashs
+crashs = pd.read_csv('data/crashes.csv')
+defectcrash=crashs[crashs['ROAD_DEFECT']!='NO DEFECTS']
+wardcrashcount=pd.read_csv('data/wardcrashcount.csv')
+
+
+wardlitcrashcount=pd.read_csv('data/wardlitcrashcount.csv')
+
+
