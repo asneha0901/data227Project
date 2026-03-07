@@ -55,13 +55,13 @@ costs_long['ward']=costs_long['ward'].astype(int)
 # dictionary from earlier
 ward_to_side = {
     1: "North Side", 2: "Central", 3: "South Side", 4: "South Side", 5: "South Side",
-    6: "South Side", 7: "South Side", 8: "South Side", 9: "South Side", 10: "Far South Side",
+    6: "South Side", 7: "South Side", 8: "South Side", 9: "Far South Side", 10: "Far South Side",
     11: "South Side", 12: "Southwest Side", 13: "Southwest Side", 14: "Southwest Side",
     15: "Southwest Side", 16: "South Side", 17: "Southwest Side", 18: "Southwest Side",
     19: "Far South Side", 20: "South Side", 21: "Far South Side", 22: "Southwest Side",
     23: "Southwest Side", 24: "West Side", 25: "Central", 26: "West Side", 27: "Central",
     28: "West Side", 29: "West Side", 30: "Northwest Side", 31: "Northwest Side",
-    32: "North Side", 33: "North Side", 34: "South Side", 35: "Northwest Side",
+    32: "North Side", 33: "North Side", 34: "Far South Side", 35: "Northwest Side",
     36: "Northwest Side", 37: "West Side", 38: "Northwest Side", 39: "Northwest Side",
     40: "Far North Side", 41: "Far North Side", 42: "Central", 43: "North Side",
     44: "North Side", 45: "Northwest Side", 46: "North Side", 47: "North Side",
