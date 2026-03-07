@@ -2,7 +2,7 @@ import streamlit as st
 import altair as alt
 from charts.charts_crime import crimefullchart, timeline, spatial, transporttot
 
-st.set_page_config(page_title="Story", layout="wide")
+st.set_page_config(page_title="Correlates", layout="wide")
 st.title("Overview of Chicago Menu-Money Spending Patterns")
 
 st.header("Correlations between race and under-resourced neighborhoods can lead to misconceived stereotypes")

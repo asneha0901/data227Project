@@ -54,16 +54,16 @@ points = alt.Chart(points_df2).mark_circle().encode(
     brush
 )
 bar_chart1 = alt.Chart(points_df2).mark_bar().encode(
-    x=alt.X('category:N', title='Property Type'),
-    y=alt.Y('mean(cost):Q', title='Average Spent', scale=alt.Scale(domain=[0,1000000])),
-    color=alt.Color('category:N', legend=None),
-    tooltip=['category:N', 'mean(cost):Q']
+    x=alt.X('category:N', title='Spending Category'),
+    y=alt.Y('mean(cost):Q', title='Average Spent by Chicago Side', scale=alt.Scale(domain=[0,1000000])),
+    color=alt.Color('category:N', legend=None, scale=alt.Scale(scheme='accent')),
+    tooltip=[alt.Tooltip("category:N", title="Category"), alt.Tooltip("mean(cost):Q", title="Mean of Amount Spent")]
 ).transform_filter(
     brush 
 ).properties(
     width=400,
     height=400,
-    title='Menu-Money Spent By Category (per Side) (static scale)'
+    title='Menu-Money Spent By Category (static scale)'
 )
 bar_chart2 = alt.Chart(points_df2).mark_bar().encode(
     x=alt.X('category:N', title='Property Type'),
@@ -75,7 +75,7 @@ bar_chart2 = alt.Chart(points_df2).mark_bar().encode(
 ).properties(
     width=300,
     height=300,
-    title='Menu-Money Spent By Category (per Side) (refactored scale)'
+    title='Menu-Money Spent By Category (refactored scale)'
 )
 map_view = (spend_by_type).project(type="mercator")
 
