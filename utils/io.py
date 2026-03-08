@@ -206,3 +206,69 @@ wardcrashcount=pd.read_csv('data/wardcrashcount.csv')
 wardlitcrashcount=pd.read_csv('data/wardlitcrashcount.csv')
 
 
+##DATA FOR SCHOOLS
+school_with_ward=pd.read_csv('data/school_ward.csv')
+school_by_ward = (
+    school_with_ward.groupby("ward")
+    .agg('sum')
+    .reset_index()
+)
+school_by_ward['row_count'] = school_with_ward.groupby("ward").size().values
+school_by_ward['ward']=school_by_ward['ward'].astype(int)
+acs['average_income'] = (
+    acs['Under $25,000'] * 12500 +
+    acs['$25,000 to $49,999'] * 37500 +
+    acs['$50,000 to $74,999'] * 62500 +
+    acs['$75,000 to $125,000'] * 100000 +
+    acs['$125,000 +'] * 150000
+) / acs[['Under $25,000', '$25,000 to $49,999', '$50,000 to $74,999', '$75,000 to $125,000', '$125,000 +']].sum(axis=1)
+acsinc=acs[['Ward','average_income']]
+acsinc = acsinc.rename(columns={'Ward': 'ward'})
+acsinc['neighborhoods']=acsinc['ward'].map(ward_to_side)
+
+def create_diverging_df(df, prefix, row_count_col='row_count', ward_col='ward'):
+    cols = [c for c in df.columns if c.startswith(prefix)]
+    working = df[[ward_col, row_count_col] + cols].copy()
+    
+    working['data pres'] = working[row_count_col] - working[[c for c in cols if 'NOT ENOUGH DATA' in c or 'INSUFFICIENT' in c]].sum(axis=1)
+    for col in cols:
+        working[col] = (working[col] / working['data pres']) * 100
+    
+    neutral_col = [c for c in cols if 'NEUTRAL' in c and 'neg' not in c and 'pos' not in c][0]
+    working[f'{prefix}_NEUTRAL_pos'] = working[neutral_col] / 2
+    working[f'{prefix}_NEUTRAL_neg'] = working[neutral_col] / -2
+    working[[c for c in cols if 'VERY WEAK' in c or c.endswith('_WEAK')]] *= -1
+    
+    final_cols = [f'{prefix}_STRONG', f'{prefix}_VERY STRONG', 
+                  f'{prefix}_VERY WEAK', f'{prefix}_WEAK', ward_col]
+    result = working[final_cols].copy()
+    
+    result.columns = ['strong', 'very_strong', 
+                      'very_weak', 'weak', 'ward']
+    
+    result = result.melt(id_vars='ward', var_name='response', value_name='percentage')
+
+    order_map = {r: i for i, r in enumerate(['very_weak', 'weak', 'strong', 'very_strong'])}
+    result['sort_order'] = result['response'].map(order_map)
+    label_map = {
+        'very_weak': 'Very Weak',
+        'weak': 'Weak',
+        'strong': 'Strong',
+        'very_strong': 'Very Strong'
+    }
+    result['response'] = result['response'].map(label_map)
+
+    result=pd.merge(result, acsinc, on="ward")
+    return result
+
+school_by_ward_ambition=create_diverging_df(school_by_ward, "Ambition")
+school_by_ward_safety=create_diverging_df(school_by_ward, "Safety")
+school_by_ward_collab=create_diverging_df(school_by_ward, "Collaborative Teachers")
+school_by_ward_lead=create_diverging_df(school_by_ward, "Effective Leaders")
+school_by_ward_support=create_diverging_df(school_by_ward, "Supportive Environment")
+school_by_ward_fam=create_diverging_df(school_by_ward, "Involved Families")
+
+color_scale = alt.Scale(
+    domain=['Very Weak','Weak','Strong','Very Strong'],
+    range=['#e03c2d', '#f4a582', "#aff518","#00a60b"]
+)

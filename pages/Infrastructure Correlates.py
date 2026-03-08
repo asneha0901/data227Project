@@ -1,6 +1,6 @@
 import streamlit as st
 import altair as alt
-from charts.charts_crime import crimefullchart, timeline, spatial, transporttot
+from charts.charts_crime import crimefullchart, timeline, spatial, transporttot, schools_view
 
 st.set_page_config(page_title="Correlates", layout="wide")
 st.title("Overview of Chicago Menu-Money Spending Patterns")
@@ -16,3 +16,5 @@ st.header('Even though most money is spent on Streets & Transportation + Lightin
 st.altair_chart(transporttot, use_container_width=True)
 st.write("here is the analysis")
 
+st.header("Neighborhoods, as segregated by income, also face differences in quality of education")
+st.altair_chart(schools_view)

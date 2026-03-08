@@ -1,6 +1,6 @@
 import altair as alt
 import pandas as pd
-from utils.io import chicago_wards_df, yr2021sec, secdf, crime21, races3, acs, costs_long_top2, wardlitcrashcount, wardcrashcount
+from utils.io import chicago_wards_df,costs_wide, yr2021sec, secdf, crime21, races3, acs, costs_long_top2, wardlitcrashcount, wardcrashcount, acsinc, school_by_ward_ambition, school_by_ward_fam, school_by_ward_safety, school_by_ward_support, color_scale
 
 chicago_wards = alt.topo_feature(
 "https://raw.githubusercontent.com/asneha0901/data227_content/refs/heads/main/chicago-ward-boundaries.topojson",
@@ -186,7 +186,7 @@ income_chart = (
             orient="bottom", title='neighborhoods ', padding=40),
         strokeOpacity=alt.condition(neiselect, alt.value(1), alt.value(0.1)),
     )
-).properties(width=300).add_params(
+).properties(width=360).add_params(
     neiselect
 )
 
@@ -196,7 +196,7 @@ ambpos_chart = ambbase.mark_bar().transform_filter(
     alt.datum.percentage >= 0
 ).encode(
     x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
-    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100])),
+    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100]), axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='ascending')
 )
@@ -205,7 +205,7 @@ ambneg_chart = ambbase.mark_bar().transform_filter(
     alt.datum.percentage < 0
 ).encode(
     x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
-    y=alt.Y('percentage:Q'),
+    y=alt.Y('percentage:Q', axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='descending')
 )
@@ -218,7 +218,7 @@ safpos_chart = safbase.mark_bar().transform_filter(
     alt.datum.percentage >= 0
 ).encode(
     x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
-    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100])),
+    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100]), axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='ascending')
 )
@@ -227,7 +227,7 @@ safneg_chart = safbase.mark_bar().transform_filter(
     alt.datum.percentage < 0
 ).encode(
     x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
-    y=alt.Y('percentage:Q'),
+    y=alt.Y('percentage:Q', axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='descending')
 )
@@ -240,7 +240,7 @@ fampos_chart = fambase.mark_bar().transform_filter(
     alt.datum.percentage >= 0
 ).encode(
     x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
-    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100])),
+    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100]), axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='ascending')
 )
@@ -249,7 +249,7 @@ famneg_chart = fambase.mark_bar().transform_filter(
     alt.datum.percentage < 0
 ).encode(
     x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
-    y=alt.Y('percentage:Q'),
+    y=alt.Y('percentage:Q', axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='descending')
 )
@@ -262,7 +262,7 @@ suppos_chart = supbase.mark_bar().transform_filter(
     alt.datum.percentage >= 0
 ).encode(
     x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
-    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100])),
+    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100]), axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='ascending')
 )
@@ -271,11 +271,38 @@ supneg_chart = supbase.mark_bar().transform_filter(
     alt.datum.percentage < 0
 ).encode(
     x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
-    y=alt.Y('percentage:Q'),
+    y=alt.Y('percentage:Q', axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='descending')
 )
 
 supchart = alt.layer(suppos_chart, supneg_chart).add_params(neiselect)
 
-income_chart| (ambchart & safchart | famchart & supchart)
+school_spending = (
+    alt.Chart(chicago_wards, title="Spending on Schools & Libraries")
+    .mark_geoshape(strokeWidth=2.3)
+    .project(type="mercator")
+    .transform_lookup(
+        lookup="properties.ward",
+        from_=alt.LookupData(
+            costs_wide,
+            key="ward",
+            fields=['Schools & Libraries','neighborhoods']
+        )
+    )
+    .encode(
+        color=alt.Color("Schools & Libraries:Q", scale=alt.Scale(scheme="oranges"), title="Total SPENT").legend(
+            orient="bottom", title='TOTAL SPENT', padding=50),
+        tooltip=[
+            alt.Tooltip("properties.ward:O", title="Ward"),
+            alt.Tooltip("Schools & Libraries:Q", title="Total cost", format=",")
+        ],
+        stroke=alt.Stroke('neighborhoods:N', scale=alt.Scale(scheme='dark2')).legend(
+            orient="bottom", title='neighborhoods ', padding=40),
+        strokeOpacity=alt.condition(neiselect, alt.value(1), alt.value(0.1)),
+    )
+).add_params(
+    neiselect
+).properties(width=360)
+
+schools_view= (income_chart| school_spending) | (ambchart & safchart | famchart & supchart)
