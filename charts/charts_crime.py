@@ -183,7 +183,7 @@ income_chart = (
         )).encode(
         color=alt.Color("average_income:Q", scale=alt.Scale(scheme="purples"), title="Average Income", legend=alt.Legend(orient='bottom')),
         stroke=alt.Stroke('neighborhoods:N', scale=alt.Scale(scheme='dark2')).legend(
-            orient="bottom", title='neighborhoods ', padding=40),
+            orient="top", title='neighborhoods ', padding=40),
         strokeOpacity=alt.condition(neiselect, alt.value(1), alt.value(0.1)),
     )
 ).properties(width=360).add_params(
@@ -298,7 +298,7 @@ school_spending = (
             alt.Tooltip("Schools & Libraries:Q", title="Total cost", format=",")
         ],
         stroke=alt.Stroke('neighborhoods:N', scale=alt.Scale(scheme='dark2')).legend(
-            orient="bottom", title='neighborhoods ', padding=40),
+            orient="top", title='neighborhoods ', padding=40),
         strokeOpacity=alt.condition(neiselect, alt.value(1), alt.value(0.1)),
     )
 ).add_params(

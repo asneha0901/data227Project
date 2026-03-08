@@ -39,5 +39,31 @@ st.markdown("""
             
             From the Chicago Data portal we were able to find information on 650 Chicago public Schools around the city and get their assessment reports from the year 2021-2022 to see how the cumulative funding over the past 10 years from the Menu-money fund affected outcomes. By choosing a year after our menu-money dataset ends, we decided to look at the impact of the spending as opposed to speculate on possible triggers for spending habits (the way we did for security cameras.)""")
 st.write("Overall, we were able to clean the datasets and confine it to the selected durations that either overlapped with data from menu-money or followed directly after and analyse how spatially ward spending correlates with statistics on these different categories. Such an analysis allowed us to see how infrastructure spending by the ward plays a big role in general quality of life and well being in different neighborhoods possibly suggesting that the root solution to some of the issues lies in better budget allocation practices.")
-st.write("To understand why we chose specific visualization choices and encodings over others please refer to our markdown notebook that details our choices based on exploratory figures constructed before-hand.")
+st.write("For each visualization, here is a rationale behind our choices")
+st.markdown(""" 
+            **For Figure 1:**
+            1. Stroke color for neighborhoods: We initially used centroid points to indicate neighborhoods and allowed users to have more freedom to select groups of wards to take a closer look at. However, as we conducted out literature search on the differences in Chicago neighborhoods/ sides, we decided it would be more concise and informative to guide the selection of groups of wards by restricting it to neighborhoods. This couldn't be done by fill color since we were using fill color to indicate the relative amount of spending per category.
+            2. Fill Color for Spending per category: We chose to use fill color to show spending because it was the clearest way of demonstrating where spending on each category is concentrated spatially. We chose the single hue gray scale so it wouldn't interfere with visualizations of the different neighborhoods or suggest any lines of correlation between the fill color and the bar chart.
+            3. Bar chart for category spending: We chose to use a bar chart for this quantitative variable to best demonstrate how the bars move/ values increase or decrease with the changes in neighborhoods. This was fairly effective due to the static scale we used that allowed users to see the magnitude of spending on categories by neighborhoods.
+            """)
+st.markdown(""" 
+            **For Figure 2:**
+            1. Dual Axis Line Chart: We chose using a line chart to show trends along time as it is the most cohesive way of establishing whether both variables change similarly to each other. Furthermore, by using a dual axis we were able to keep them on the same chart and make the comparison more feasible. The color of the axis labels also act as legends for what the lines denote making the dual axis line chart a minimalist visualization of trends along time.
+            2. Race distribution choropleth: We used a choropleth with a radio button to select for which race to observe in the color purple so it wouldn't clash with the colors that already have attached meaning from the line graph. Since the values are in proportions, a choropleth is effective since it doesn't have extremes in any of the categories. moreover, the main focus of our project is to look at data spatially so a choropleth is an audience-friendly way to do so.
+            3. Stroke color for most common race: To make our analysis more clear and guided, we also decided to encode the most common race in our two choropleths using stroke color which would prevent viewers from having to switch between looking at choropleths to make observations about race with money spent on cameras and crime
+            4. Colors for the choropleths: We decided to use greens for the choropleth on money spent on cameras and blues for the choropleth on number of crimes as they corresponded well with the colors in the line graph allowing for visual continuity and representation of the same variable with the same encoding across figures.
+            """)
+st.markdown("""
+            **For Figure 3:**
+            1. Bar graphs for both proportions: We wanted to use a type of chart that could be repeated twice to show the difference between the proportion of money spent on the categories and how quickly that changes when normalized over area. To make the comparison clear we used bar charts for both.
+            2. Hue for area: In the first bar chart we also wanted to represent area before normalizing it and showing the output to illustrate the differences in average area that we noticed by eye on the ward map but is more evidently quantified using color in the bar graph.
+            3. Colors on the choropleth: In the interest of concistency and visual continuity, we used the same colors that were present in the bar graphs (green and purple) to represent the two variables in the choropleths (Lighting and Streets)
+            """)
+st.markdown("""
+            **For Figure 4:**
+            1. Diverging bar charts for school assessments: Since we had two scales of values (positive assessments and negative assessments) we decided to use a diverging bar chart with a stable center (0). This makes it easy to compare values that move in opposite directions.
+            2. Colors for diverging bar charts: We used green to evoke positive and reds to evoke negatives owing to classic color combinations that are intuitive for viewers.
+            3. Stroke color for neighborhoods: We wanted to stay consistent with our groupings and so used stroke color for neighborhoods.
+            """)
+st.write("To understand more about how we conducted our analysis please refer to our markdown notebook that details our choices based on exploratory figures constructed before-hand.")
 st.link_button("JUPYTER MARKDOWN FOR DATA PROCESSING", "https://github.com/asneha0901/data227Project/blob/main/.ipynb_checkpoints/ORGANIZED227PROJ.ipynb")
