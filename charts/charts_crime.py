@@ -140,7 +140,8 @@ crash_chart = (
             key="ward",
             fields=['crash per 1k res'] 
         )).encode(
-        color=alt.Color("crash per 1k res:Q", scale=alt.Scale(scheme="purples"), title="Number of Crashes / 1k residents", legend=alt.Legend(orient='right', padding=50))
+        color=alt.Color("crash per 1k res:Q", scale=alt.Scale(scheme="purples"), title="Number of Crashes / 1k residents", legend=alt.Legend(orient='right', padding=50)),
+        tooltip=[alt.Tooltip("properties.ward", "Ward"), alt.Tooltip("crash per 1k res:Q", title="Number of Crashes / 1k residents")]
     )
 ).properties(height=400)
 
@@ -155,7 +156,8 @@ ratiolight_chart = (
             key="ward",
             fields=['unlit_to_lit_ratio'] 
         )).encode(
-        color=alt.Color("unlit_to_lit_ratio:Q", scale=alt.Scale(scheme="greens"), title="Crash Ratio Relative to Lit Roads", legend=alt.Legend(orient='right', padding=50))
+        color=alt.Color("unlit_to_lit_ratio:Q", scale=alt.Scale(scheme="greens"), title="Crash Ratio Relative to Lit Roads", legend=alt.Legend(orient='right', padding=50)),
+        tooltip=[alt.Tooltip("properties.ward", "Ward"), alt.Tooltip("unlit_to_lit_ratio:Q", title="Crashes on Unlit Roads/ on Lit Roads")]
     )
 ).properties(height=400)
 
@@ -185,6 +187,9 @@ income_chart = (
         stroke=alt.Stroke('neighborhoods:N', scale=alt.Scale(scheme='dark2')).legend(
             orient="top", title='neighborhoods ', padding=40),
         strokeOpacity=alt.condition(neiselect, alt.value(1), alt.value(0.1)),
+        tooltip=[
+            alt.Tooltip("properties.ward:O", title="Ward"),
+            alt.Tooltip("average_income:Q", title="Average Income")]
     )
 ).properties(width=360).add_params(
     neiselect
@@ -195,7 +200,7 @@ ambbase = alt.Chart(school_by_ward_ambition,title='School Ambition Assessment').
 ambpos_chart = ambbase.mark_bar().transform_filter(
     alt.datum.percentage >= 0
 ).encode(
-    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    x=alt.X('ward:N', axis=alt.Axis(title='wards')),
     y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100]), axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='ascending')
@@ -204,7 +209,7 @@ ambpos_chart = ambbase.mark_bar().transform_filter(
 ambneg_chart = ambbase.mark_bar().transform_filter(
     alt.datum.percentage < 0
 ).encode(
-    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    x=alt.X('ward:N', axis=alt.Axis(title='wards')),
     y=alt.Y('percentage:Q', axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='descending')
@@ -217,7 +222,7 @@ safbase = alt.Chart(school_by_ward_safety, title='School Safety Assessment').mar
 safpos_chart = safbase.mark_bar().transform_filter(
     alt.datum.percentage >= 0
 ).encode(
-    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    x=alt.X('ward:N', axis=alt.Axis(title='wards')),
     y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100]), axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='ascending')
@@ -226,7 +231,7 @@ safpos_chart = safbase.mark_bar().transform_filter(
 safneg_chart = safbase.mark_bar().transform_filter(
     alt.datum.percentage < 0
 ).encode(
-    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    x=alt.X('ward:N', axis=alt.Axis(title='wards')),
     y=alt.Y('percentage:Q', axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='descending')
@@ -239,7 +244,7 @@ fambase = alt.Chart(school_by_ward_fam, title='Family Involvement Assessment').m
 fampos_chart = fambase.mark_bar().transform_filter(
     alt.datum.percentage >= 0
 ).encode(
-    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    x=alt.X('ward:N', axis=alt.Axis(title='wards')),
     y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100]), axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='ascending')
@@ -248,7 +253,7 @@ fampos_chart = fambase.mark_bar().transform_filter(
 famneg_chart = fambase.mark_bar().transform_filter(
     alt.datum.percentage < 0
 ).encode(
-    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    x=alt.X('ward:N', axis=alt.Axis(title='wards')),
     y=alt.Y('percentage:Q', axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='descending')
@@ -261,7 +266,7 @@ supbase = alt.Chart(school_by_ward_support, title='Supportive Environment Assess
 suppos_chart = supbase.mark_bar().transform_filter(
     alt.datum.percentage >= 0
 ).encode(
-    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    x=alt.X('ward:N', axis=alt.Axis(title='wards')),
     y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100]), axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='ascending')
@@ -270,7 +275,7 @@ suppos_chart = supbase.mark_bar().transform_filter(
 supneg_chart = supbase.mark_bar().transform_filter(
     alt.datum.percentage < 0
 ).encode(
-    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    x=alt.X('ward:N', axis=alt.Axis(title='wards')),
     y=alt.Y('percentage:Q', axis=alt.Axis(labels=False, title='Relative Proportions')),
     color=alt.Color('response:N', scale=color_scale),
     order=alt.Order('sort_order:Q', sort='descending')
