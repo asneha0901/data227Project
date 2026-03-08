@@ -26,12 +26,12 @@ seccamchart = (
     ).properties(width=270)
 )
 
-base = alt.Chart(secdf, title="Correlation between Public Crimes and Money spent by Wards on Security Cameras").encode(x='Year')
-line1 = base.mark_line(color='blue').encode(
+secbase = alt.Chart(secdf, title="Correlation between Public Crimes and Money spent by Wards on Security Cameras").encode(x='Year')
+crimeline = secbase.mark_line(color='blue').encode(
     alt.Y('count').axis(title='Number of Public Crimes', titleColor='#5276A7'))
-line2 = base.mark_line(color='green').encode(
+camline = secbase.mark_line(color='green').encode(
     alt.Y('cost').axis(title='Amount spent on Security Cameras', titleColor='green'))
-timeline=alt.layer(line1, line2).resolve_scale(
+timeline=alt.layer(crimeline, camline).resolve_scale(
     y='independent'
 ).properties(width=750)
 
@@ -70,7 +70,7 @@ crimetot = (
             key="ward",
             fields=['Year', 'Most Common Race'] 
         )).encode(
-        color=alt.Color("Year:Q", scale=alt.Scale(scheme="greens"), title="Total number of crimes", legend=alt.Legend(orient='bottom')),
+        color=alt.Color("Year:Q", scale=alt.Scale(scheme="blues"), title="Total number of crimes", legend=alt.Legend(orient='bottom')),
         tooltip=[
             alt.Tooltip("properties.ward:O", title="Ward"),
             alt.Tooltip("Year:Q", title="Total Number of Crimes", format=",")
@@ -112,8 +112,8 @@ crimefullchart=(timeline & spatial)
 percentage1=alt.Chart(costs_long_top2, title='Proportion of Menu-Money Spent').mark_bar().encode(
     x=alt.X('average(Percentage spent on Category):Q', scale=alt.Scale(domain=[0,1], clamp=True), title='Proportion of Menu-Money Spent'),
     yOffset="category:N",
-    y=alt.Y('neighborhoods:N'),
-    color=alt.Color('average(area):Q', scale=alt.Scale(scheme='blues'), legend=alt.Legend(orient='bottom')),
+    y=alt.Y('neighborhoods:N', title='Neighborhood'),
+    color=alt.Color('average(area):Q', scale=alt.Scale(scheme='blues'), legend=alt.Legend(orient='right', padding=67)),
     stroke=alt.Stroke('category', scale=alt.Scale(scheme='accent'), legend=None))
 text = percentage1.mark_text(
     align="left",
