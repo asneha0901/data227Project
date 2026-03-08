@@ -141,7 +141,7 @@ crash_chart = (
             fields=['crash per 1k res'] 
         )).encode(
         color=alt.Color("crash per 1k res:Q", scale=alt.Scale(scheme="purples"), title="Number of Crashes / 1k residents", legend=alt.Legend(orient='right', padding=50)),
-        tooltip=[alt.Tooltip("properties.ward", "Ward"), alt.Tooltip("crash per 1k res:Q", title="Number of Crashes / 1k residents")]
+        tooltip=[alt.Tooltip("properties.ward:O", title="Ward"), alt.Tooltip("crash per 1k res:Q", title="Number of Crashes / 1k residents")]
     )
 ).properties(height=400)
 
@@ -157,7 +157,7 @@ ratiolight_chart = (
             fields=['unlit_to_lit_ratio'] 
         )).encode(
         color=alt.Color("unlit_to_lit_ratio:Q", scale=alt.Scale(scheme="greens"), title="Crash Ratio Relative to Lit Roads", legend=alt.Legend(orient='right', padding=50)),
-        tooltip=[alt.Tooltip("properties.ward", "Ward"), alt.Tooltip("unlit_to_lit_ratio:Q", title="Crashes on Unlit Roads/ on Lit Roads")]
+        tooltip=[alt.Tooltip("properties.ward:O", title="Ward"), alt.Tooltip("unlit_to_lit_ratio:Q", title="Crashes on Unlit Roads/ on Lit Roads")]
     )
 ).properties(height=400)
 
