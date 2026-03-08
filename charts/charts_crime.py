@@ -161,3 +161,121 @@ ratiolight_chart = (
 
 transporttot=(percentage | areanorm).resolve_scale(color='independent') & (crash_chart | ratiolight_chart).resolve_scale(color='independent')
 transporttot
+
+
+
+##ALL THE GRAPHS FOR SCHOOLS
+
+neiselect = alt.selection_point(
+    fields=['neighborhoods'],
+    bind='legend'
+)
+income_chart = (
+    alt.Chart(chicago_wards, title="Average Income by Ward")
+    .mark_geoshape(strokeWidth=2.5)
+    .project(type="mercator")
+    .transform_lookup(
+        lookup="properties.ward",
+        from_=alt.LookupData(
+            acsinc,
+            key="ward",
+            fields=['average_income','neighborhoods'] 
+        )).encode(
+        color=alt.Color("average_income:Q", scale=alt.Scale(scheme="purples"), title="Average Income", legend=alt.Legend(orient='bottom')),
+        stroke=alt.Stroke('neighborhoods:N', scale=alt.Scale(scheme='dark2')).legend(
+            orient="bottom", title='neighborhoods ', padding=40),
+        strokeOpacity=alt.condition(neiselect, alt.value(1), alt.value(0.1)),
+    )
+).properties(width=300).add_params(
+    neiselect
+)
+
+ambbase = alt.Chart(school_by_ward_ambition,title='School Ambition Assessment').mark_bar().transform_filter(neiselect)
+
+ambpos_chart = ambbase.mark_bar().transform_filter(
+    alt.datum.percentage >= 0
+).encode(
+    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100])),
+    color=alt.Color('response:N', scale=color_scale),
+    order=alt.Order('sort_order:Q', sort='ascending')
+)
+
+ambneg_chart = ambbase.mark_bar().transform_filter(
+    alt.datum.percentage < 0
+).encode(
+    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    y=alt.Y('percentage:Q'),
+    color=alt.Color('response:N', scale=color_scale),
+    order=alt.Order('sort_order:Q', sort='descending')
+)
+
+ambchart = alt.layer(ambpos_chart, ambneg_chart).add_params(neiselect)
+
+safbase = alt.Chart(school_by_ward_safety, title='School Safety Assessment').mark_bar().transform_filter(neiselect)
+
+safpos_chart = safbase.mark_bar().transform_filter(
+    alt.datum.percentage >= 0
+).encode(
+    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100])),
+    color=alt.Color('response:N', scale=color_scale),
+    order=alt.Order('sort_order:Q', sort='ascending')
+)
+
+safneg_chart = safbase.mark_bar().transform_filter(
+    alt.datum.percentage < 0
+).encode(
+    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    y=alt.Y('percentage:Q'),
+    color=alt.Color('response:N', scale=color_scale),
+    order=alt.Order('sort_order:Q', sort='descending')
+)
+
+safchart = alt.layer(safpos_chart, safneg_chart).add_params(neiselect)
+
+fambase = alt.Chart(school_by_ward_fam, title='Family Involvement Assessment').mark_bar().transform_filter(neiselect)
+
+fampos_chart = fambase.mark_bar().transform_filter(
+    alt.datum.percentage >= 0
+).encode(
+    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100])),
+    color=alt.Color('response:N', scale=color_scale),
+    order=alt.Order('sort_order:Q', sort='ascending')
+)
+
+famneg_chart = fambase.mark_bar().transform_filter(
+    alt.datum.percentage < 0
+).encode(
+    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    y=alt.Y('percentage:Q'),
+    color=alt.Color('response:N', scale=color_scale),
+    order=alt.Order('sort_order:Q', sort='descending')
+)
+
+famchart = alt.layer(fampos_chart, famneg_chart).add_params(neiselect)
+
+supbase = alt.Chart(school_by_ward_support, title='Supportive Environment Assessment').mark_bar().transform_filter(neiselect)
+
+suppos_chart = supbase.mark_bar().transform_filter(
+    alt.datum.percentage >= 0
+).encode(
+    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    y=alt.Y('percentage:Q', scale=alt.Scale(domain=[-100, 100])),
+    color=alt.Color('response:N', scale=color_scale),
+    order=alt.Order('sort_order:Q', sort='ascending')
+)
+
+supneg_chart = supbase.mark_bar().transform_filter(
+    alt.datum.percentage < 0
+).encode(
+    x=alt.X('ward:N', axis=alt.Axis(labels=False, title='wards')),
+    y=alt.Y('percentage:Q'),
+    color=alt.Color('response:N', scale=color_scale),
+    order=alt.Order('sort_order:Q', sort='descending')
+)
+
+supchart = alt.layer(suppos_chart, supneg_chart).add_params(neiselect)
+
+income_chart| (ambchart & safchart | famchart & supchart)
