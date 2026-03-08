@@ -54,7 +54,7 @@ crimeperk = (
             alt.Tooltip("spent per crime per person:Q", title="Money on cameras per crime per person", format=",")
         ],
         stroke=alt.Stroke('Most Common Race:N', scale=alt.Scale(scheme='tableau10')).legend(
-            orient="right", title='Most Common Race'),
+            orient="bottom", title='Most Common Race'),
         strokeOpacity=alt.condition(brush2, alt.value(1), alt.value(0.1))
     ).properties(width=270))
 
@@ -76,7 +76,7 @@ crimetot = (
             alt.Tooltip("Year:Q", title="Total Number of Crimes", format=",")
         ],
         stroke=alt.Stroke('Most Common Race:N', scale=alt.Scale(scheme='tableau10')).legend(
-            orient="right", title='Most Common Race'),
+            orient="bottom", title='Most Common Race'),
         strokeOpacity=alt.condition(brush2, alt.value(1), alt.value(0.1))
     ).properties(width=270))
 
