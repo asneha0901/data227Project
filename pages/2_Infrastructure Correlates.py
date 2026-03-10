@@ -1,6 +1,7 @@
 import streamlit as st
 import altair as alt
 from charts.charts_crime import crimefullchart, transporttot, schools_view
+st.sidebar.header("Infrastructure Correlates")
 
 st.set_page_config(page_title="Correlates", layout="wide")
 st.title("Overview of Chicago Menu-Money Spending Patterns")
