@@ -92,10 +92,10 @@ race_dist = (
         from_=alt.LookupData(
             acs,
             key="Ward",
-            fields=races3 
+            fields=list(races3) 
         )
     )
-    .transform_calculate(selected_race="datum[cat_sel]")
+    .transform_calculate(selected_race="datum[cat_sel] || 0")
     .encode(
         color=alt.Color("selected_race:Q", scale=alt.Scale(scheme="purples"), title="Proportion of Race", legend=alt.Legend(orient='bottom')),
         tooltip=[
@@ -170,7 +170,8 @@ transporttot
 
 neiselect = alt.selection_point(
     fields=['neighborhoods'],
-    bind='legend'
+    bind='legend',
+    value=[{'neighborhoods': 'Central'}]
 )
 income_chart = (
     alt.Chart(chicago_wards, title="Average Income by Ward")

@@ -1,8 +1,26 @@
 import streamlit as st
 import altair as alt
 
-st.set_page_config(page_title="Conclusion and Methodology", layout="wide")
-st.sidebar.header("Conclusion and Methodology")
+st.set_page_config(page_title="Methodology", layout="wide")
+st.header("CONCLUSION")
+
+st.subheader("Main Take-Aways")
+st.write("We began this project with a consideration of Chicago as one of the largest segregated cities in the U.S.A. As we explored this dataset, we wanted to point the few ways in which political practices like jerrymandering for ward maps can grossly influence social outcomes.")
+st.write("""
+         To this end, a few take-home messages from our understanding of this dataset would include:
+         1. Streets & Transportation and Lighting comprises the bulk of a ward's budget. 
+         2. While neighborhoods in the north, which tend to be smaller, are able to spare enough of the budget after spending on Streets & Transportation and Lighting, neighborhoods in the south, which tend to be larger, are unable to.
+         3. Additionally, neighborhoods in the south are still unable to cover their needs full for even Streets & Transportation and Lighting
+         4. Different wards have differing concerns/ priorities with infrastructure spending.
+         5. While central neighborhoods are able to manage crime rates with security cameras as an infrastructure feature, prodominantly African American neighborhoods are struggling to implement the same security features due to inadequate funds.
+         6. Neighborhoods in the north are also able to better supplement the quality of education additional to the advantages given by their average high income.
+         7. Considerations of ward areas should be accounted for when re-drawing the ward map as it seems to skew resource allocation against historically underresourced communities.
+         """)
+st.subheader("Limitations")
+st.write("Our dataset looks at spending from 2012-2021 but the wards were redrawn in 2015. This impacts our analysis to some extent since a large part of our analysis is dependent on spatial clustering. Moreover, our analysis doesn't take into account other provisions for infrastructure concerns like private donors, neighborhood councils, emergency funds, lobbying, etc. This might endanger some of the conclusions/ assumptions about source of 'essential' vs 'non-essential' infrastructure budgets. ")
+
+st.subheader("Future Directions")
+st.write("One future direction we wish to expand upon is to integrate lobbying data publically available to understand how many additional sources of income are there for different wards. Additionally, given that parks and recreation was a major spending point for multiple ward it would be interested to gather data about community areas in different wards and their maintainence status and usage.")
 
 st.header("DISCLAIMER AND ETHICS STATEMENT")
 st.write("Although the data used in this project was not directly involving the information derived from individually identifiable human subjects, the broader implications of our analyses certainly have tangible effects on the lives of the residents of Chicago. This analysis highlights the geographic inequities across active Chicago neighborhoods, which can at times result in the reinforcement of negative narratives about certain neighborhoods. The observed educational and socioeconomic disparities are influenced directly and indirectly by complex history and hundreds of years of societal factors. These findings should not be interpreted as attributing the cause of unequal circumstances to individual residents or schools. The data used was publicly available and aggregates of the larger population. Because our analysis was concerned with the ward-level structural patterns and outcomes, our claims and conclusions can be based upon trends, rather than individual neighborhoods or schools. The interpretation of our results was done with caution, merely representing correlations and confounding observations without insisting on direct causal inference. ")
